@@ -18,7 +18,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 	    camera = new OrthographicCamera();
-	    viewport = new ExtendViewport(640.0f, 480.0f, camera);
+	    viewport = new ExtendViewport(1920.0f, 1280.0f, camera);
 
 		batch = new SpriteBatch();
 		img = new Texture("smile.jpg");
