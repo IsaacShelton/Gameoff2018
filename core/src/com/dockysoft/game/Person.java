@@ -13,6 +13,8 @@ import com.badlogic.gdx.math.Vector2;
     private double V0y;
     //End Gage
 
+
+    /**Are you okay isaac? */
     private static final boolean GO_BANANAS = true;
 
     public Person(float x, float y){
