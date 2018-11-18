@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by isaac on 11/17/2018.
  */
-public class Person {
+    public class Person {
     private Vector2 position;
     private float dx;
 
@@ -24,6 +24,19 @@ public class Person {
         }
         dx = Utils.clamp(dx, -24.0f, 24.0f);
     }
+
+    //Gage being dumb to learn how things work: START
+    public void flyup() {
+        //get ready for a very sophisticated line
+        position.y += 2;
+    }
+
+    public void flydown() {
+        position.y -= 2;
+    }
+
+
+    //END
 
     public void update(){position.x += dx;
         dx -= (1 / 60.0f) * dx;
