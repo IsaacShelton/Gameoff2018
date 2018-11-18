@@ -68,9 +68,10 @@ public class Game extends ApplicationAdapter {
             person.move(-4.0f, Gdx.graphics.getDeltaTime(), sprint);
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP))
-            person.flyup();
+            person.jump(0, (double)person.getDX(), Gdx.graphics.getFramesPerSecond());
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
             person.flydown();
+
 
         person.update();
         person.clamp(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

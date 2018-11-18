@@ -8,6 +8,10 @@ import com.badlogic.gdx.math.Vector2;
     public class Person {
     private Vector2 position;
     private float dx;
+    //Gage
+    private final int GRAVITY = -10;
+    private double V0y;
+    //End Gage
 
     private static final boolean GO_BANANAS = true;
 
@@ -26,15 +30,26 @@ import com.badlogic.gdx.math.Vector2;
     }
 
     //Gage being dumb to learn how things work: START
-    public void flyup() {
-        //get ready for a very sophisticated line
-        position.y += 2;
-    }
+    public void flyup() { position.y += 2; }
 
     public void flydown() {
         position.y -= 2;
     }
 
+    //look at this garbage heap
+
+    public void jump(double v0y, double v0x, int fps) {
+        double angle = Math.toDegrees(Math.atan2(v0y,v0x));
+        double vy = v0y + v0x + Math.sin(angle);
+        double time;
+        if (fps != 0) {
+            time = 1 / fps;
+        }
+        else
+            time = 0;
+        position.y += v0y * time + GRAVITY * time * time / 2;
+
+    }
 
     //END
 
