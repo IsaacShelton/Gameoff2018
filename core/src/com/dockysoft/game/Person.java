@@ -5,70 +5,66 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by isaac on 11/17/2018.
  */
-    public class Person {
+public class Person {
     private Vector2 position;
-    private float dx;
-    //Gage
-    private final int GRAVITY = -10;
-    private double V0y;
-    //End Gage
+    private Vector2 velocity;
+    private Vector2 size;
 
+    private static final int GRAVITY = 8;
+    private static final boolean MOON_WALK = false;
 
-    /**Are you okay isaac? */
-    private static final boolean GO_BANANAS = true;
-
-    public Person(float x, float y){
+    public Person(float x, float y, float w, float h) {
         position = new Vector2(x, y);
-        dx = 0;
+        velocity = new Vector2(0.0f, 0.0f);
+        size = new Vector2(w, h);
     }
 
-    public void move(float vx, float dt, boolean sprint){
-        if(sprint){
-            dx += ((vx < 0 && dx > 0) || (vx > 0 && dx < 0)) ? vx * 0.2 : vx * 0.1;
+    public void walk(float vx, boolean sprint) {
+        if (sprint) {
+            velocity.x += ((vx < 0 && velocity.x > 0) || (vx > 0 && velocity.x < 0)) ? vx * 0.2 : vx * 0.1;
         } else {
-            dx += ((vx < 0 && dx > 0) || (vx > 0 && dx < 0)) ? vx * 0.1 : vx * 0.05;
+            velocity.x += ((vx < 0 && velocity.x > 0) || (vx > 0 && velocity.x < 0)) ? vx * 0.1 : vx * 0.05;
         }
-        dx = Utils.clamp(dx, -24.0f, 24.0f);
+        velocity.x = Utils.clamp(velocity.x, -24.0f, 24.0f);
     }
 
-    //Gage being dumb to learn how things work: START
-    public void flyup() { position.y += 2; }
-
-    public void flydown() {
-        position.y -= 2;
+    public void jump(float amount) {
+        velocity.y = amount;
     }
 
-    //look at this garbage heap
+    public void update() {
+        position.add(velocity);
 
-    public void jump(double v0y, double v0x, int fps) {
-        double angle = Math.toDegrees(Math.atan2(v0y,v0x));
-        double vy = v0y + v0x + Math.sin(angle);
-        double time;
-        if (fps != 0) {
-            time = 1 / fps;
+        // Reduce x velocity proportionally
+        velocity.x -= (1 / 60.0f) * velocity.x;
+
+        // If on ground stand on ground, else compound y velocity
+        if (velocity.y < 0.0f && position.y < 196.0f) {
+            position.y = 196.0f;
+            velocity.y = 0.0f;
+        } else {
+            velocity.y -= GRAVITY * 0.1;
         }
-        else
-            time = 0;
-        position.y += v0y * time + GRAVITY * time * time / 2;
-
     }
 
-    //END
-
-    public void update(){position.x += dx;
-        dx -= (1 / 60.0f) * dx;
-    }
-
-    public void clamp(float mx, float my){
+    public void clamp(float mx, float my) {
         position.x = Utils.clamp(position.x, 0.0f, mx);
         position.y = Utils.clamp(position.y, 0.0f, my);
     }
 
-    public Vector2 getPosition(){
+    public Vector2 getPosition() {
         return position;
     }
 
-    public float getDX(){
-        return dx;
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public boolean isActuallyFacingRight() {
+        return velocity.x >= 0;
+    }
+
+    public boolean isFacingRight() {
+        return MOON_WALK ^ isActuallyFacingRight();
     }
 }
