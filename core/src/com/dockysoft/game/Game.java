@@ -15,28 +15,25 @@ public class Game extends ApplicationAdapter {
     private ExtendViewport viewport;
 
     private SpriteBatch batch;
-    private Texture img, ground, sky;
+    private TextureCatalog textures;
 
     private static final int FRAME_COLS = 6, FRAME_ROWS = 5;
     private Animation<TextureRegion> walkAnimation;
     private float walkTime;
-    private Texture walkSheet;
     private Person person;
 
     @Override
     public void create() {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-
         batch = new SpriteBatch();
-        img = new Texture("smile.jpg");
-        ground = new Texture("ground.png");
-        sky = new Texture("sky.jpg");
-        walkSheet = new Texture(Gdx.files.internal("sprite-animation.png"));
 
-        TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-                walkSheet.getWidth() / FRAME_COLS,
-                walkSheet.getHeight() / FRAME_ROWS);
+        textures = new TextureCatalog();
+        textures.loadTextures();
+
+        TextureRegion[][] tmp = TextureRegion.split(textures.walkSheet,
+                textures.walkSheet.getWidth() / FRAME_COLS,
+                textures.walkSheet.getHeight() / FRAME_ROWS);
 
         int walkFramesIndex = 0;
         TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
@@ -68,9 +65,9 @@ public class Game extends ApplicationAdapter {
         walkTime += Gdx.graphics.getDeltaTime() * Math.abs(person.getVelocity().x * 0.1) * (person.getPosition().y <= 200.0f ? 1.0f : 0.25f);
 
         batch.begin();
-        batch.draw(sky, 0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.draw(ground, 0, 200.0f - ground.getHeight() / 2, ground.getWidth() / 2, ground.getHeight() / 2);
-        batch.draw(ground, ground.getWidth() / 2, 200.0f - ground.getHeight() / 2, ground.getWidth() / 2, ground.getHeight() / 2);
+        batch.draw(textures.sky, 0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(textures.ground, 0, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
+        batch.draw(textures.ground, textures.ground.getWidth() / 2, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
 
         TextureRegion currentFrame = walkAnimation.getKeyFrame(walkTime, true);
         Vector2 position = person.getPosition();
@@ -92,9 +89,6 @@ public class Game extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        img.dispose();
-        ground.dispose();
-        sky.dispose();
-        walkSheet.dispose();
+        textures.dispose();
     }
 }
