@@ -71,6 +71,7 @@ public class Game extends ApplicationAdapter {
 
         TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         batch.draw(currentFrame, 800, 800); // Draw current frame at (50, 50)
+        batch.draw(currentFrame, 1000, 800); // Draw current frame at (50, 50)
 		batch.end();
 	}
 
