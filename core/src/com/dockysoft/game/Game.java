@@ -21,6 +21,7 @@ public class Game extends ApplicationAdapter {
     private Animation<TextureRegion> walkAnimation;
     private float walkTime;
     private Person person;
+    private Platform platform;
 
     @Override
     public void create() {
@@ -43,6 +44,7 @@ public class Game extends ApplicationAdapter {
                 walkFrames[walkFramesIndex++] = tmp[i][j];
 
         walkTime = 0.0f;
+        platform = new Platform(batch, textures, 400,400);
         walkAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
         person = new Person(200.0f, 196.0f, walkFrames[0].getRegionWidth(), walkFrames[0].getRegionHeight());
     }
@@ -60,6 +62,10 @@ public class Game extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && person.getPosition().y <= 200)
             person.jump(14);
 
+
+
+
+
         person.update();
         person.clamp(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         walkTime += Gdx.graphics.getDeltaTime() * Math.abs(person.getVelocity().x * 0.1) * (person.getPosition().y <= 200.0f ? 1.0f : 0.25f);
@@ -69,6 +75,7 @@ public class Game extends ApplicationAdapter {
         batch.draw(textures.ground, 0, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
         batch.draw(textures.ground, textures.ground.getWidth() / 2, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
 
+        platform.drawPlatform();
 
         TextureRegion currentFrame = walkAnimation.getKeyFrame(walkTime, true);
         Vector2 position = person.getPosition();
