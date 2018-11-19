@@ -69,6 +69,7 @@ public class Game extends ApplicationAdapter {
         batch.draw(textures.ground, 0, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
         batch.draw(textures.ground, textures.ground.getWidth() / 2, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
 
+
         TextureRegion currentFrame = walkAnimation.getKeyFrame(walkTime, true);
         Vector2 position = person.getPosition();
 

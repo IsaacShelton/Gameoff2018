@@ -23,6 +23,9 @@ public class TextureCatalog {
     @TextureAsset("sprite-animation.png")
     public Texture walkSheet;
 
+    @TextureAsset("platform.png")
+    public Texture platform;
+
     public void loadTextures(){
         for(Field field : this.getClass().getDeclaredFields()){
             TextureAsset location = field.getAnnotation(TextureAsset.class);
