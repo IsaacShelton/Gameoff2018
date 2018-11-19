@@ -11,8 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class Game extends ApplicationAdapter {
-    public int WIDTH = 1920;
-    public int HEIGHT = 1080;
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1080;
 
     private OrthographicCamera camera;
     private ExtendViewport viewport;

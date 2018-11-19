@@ -7,24 +7,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 public class Platform {
-
-    public int x, y;
+    public int x, y, w, h;
     private SpriteBatch batch;
     private TextureCatalog textures;
+    private AABB aabb;
 
-    public Platform(SpriteBatch spriteBatch, TextureCatalog textureCatalog, int X, int Y) {
+    public Platform(SpriteBatch spriteBatch, TextureCatalog textureCatalog, int x, int y) {
         batch = spriteBatch;
         textures = textureCatalog;
-        x = X;
-        y = Y;
+        this.x = x;
+        this.y = y;
+        this.w = textures.platform.getWidth() / 2;
+        this.h = textures.platform.getHeight() / 2;
+        this.aabb = new AABB(this.x, this.y, this.w, this.h);
     }
 
     public void drawPlatform()  {
-        batch.draw(textures.platform, x, y, textures.platform.getWidth() / 2, textures.platform.getHeight() / 2);
+        batch.draw(textures.platform, x, y, w, h);
     }
-    public void addPlatform(int X, int Y) {
-        batch.draw(textures.platform, X, Y);
-    }
-
-
 }
