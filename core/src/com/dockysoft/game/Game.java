@@ -11,6 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class Game extends ApplicationAdapter {
+    public int WIDTH = 1920;
+    public int HEIGHT = 1080;
+
     private OrthographicCamera camera;
     private ExtendViewport viewport;
 
@@ -26,7 +29,7 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        viewport = new ExtendViewport(WIDTH, HEIGHT, camera);
         batch = new SpriteBatch();
 
         textures = new TextureCatalog();
@@ -62,16 +65,12 @@ public class Game extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && person.getPosition().y <= 200)
             person.jump(14);
 
-
-
-
-
         person.update();
-        person.clamp(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        person.clamp(WIDTH, HEIGHT);
         walkTime += Gdx.graphics.getDeltaTime() * Math.abs(person.getVelocity().x * 0.1) * (person.getPosition().y <= 200.0f ? 1.0f : 0.25f);
 
         batch.begin();
-        batch.draw(textures.sky, 0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(textures.sky, 0.0f, 0.0f, WIDTH, HEIGHT);
         batch.draw(textures.ground, 0, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
         batch.draw(textures.ground, textures.ground.getWidth() / 2, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
 
