@@ -2,89 +2,101 @@ package com.dockysoft.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class Game extends ApplicationAdapter {
-    OrthographicCamera camera;
-    ExtendViewport viewport;
+    private OrthographicCamera camera;
+    private ExtendViewport viewport;
 
-	SpriteBatch batch;
-	Texture img;
+    private SpriteBatch batch;
+    private TextureCatalog textures;
 
     private static final int FRAME_COLS = 6, FRAME_ROWS = 5;
-    Animation<TextureRegion> walkAnimation;
-    Texture walkSheet;
+    private Animation<TextureRegion> walkAnimation;
+    private float walkTime;
+    private Person person;
+    private Platform platform;
 
-    float stateTime;
+    @Override
+    public void create() {
+        camera = new OrthographicCamera();
+        viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        batch = new SpriteBatch();
 
-	@Override
-	public void create () {
-	    camera = new OrthographicCamera();
-	    viewport = new ExtendViewport(1920.0f, 1280.0f, camera);
+        textures = new TextureCatalog();
+        textures.loadTextures();
 
-		batch = new SpriteBatch();
-		img = new Texture("smile.jpg");
+        TextureRegion[][] tmp = TextureRegion.split(textures.walkSheet,
+                textures.walkSheet.getWidth() / FRAME_COLS,
+                textures.walkSheet.getHeight() / FRAME_ROWS);
 
-        // Load the sprite sheet as a Texture
-        walkSheet = new Texture(Gdx.files.internal("sprite-animation.png"));
-
-        // Use the split utility method to create a 2D array of TextureRegions. This is
-        // possible because this sprite sheet contains frames of equal size and they are
-        // all aligned.
-        TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-                walkSheet.getWidth() / FRAME_COLS,
-                walkSheet.getHeight() / FRAME_ROWS);
-
-        // Place the regions into a 1D array in the correct order, starting from the top
-        // left, going across first. The Animation constructor requires a 1D array.
+        int walkFramesIndex = 0;
         TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-        int index = 0;
-        for (int i = 0; i < FRAME_ROWS; i++) {
-            for (int j = 0; j < FRAME_COLS; j++) {
-                walkFrames[index++] = tmp[i][j];
-            }
-        }
 
-        // Initialize the Animation with the frame interval and array of frames
+        for (int i = 0; i < FRAME_ROWS; i++)
+            for (int j = 0; j < FRAME_COLS; j++)
+                walkFrames[walkFramesIndex++] = tmp[i][j];
+
+        walkTime = 0.0f;
+        platform = new Platform(batch, textures, 400,400);
         walkAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
-
-        // Instantiate a SpriteBatch for drawing and reset the elapsed animation
-        // time to 0
-        stateTime = 0f;
-	}
-
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
-
-		batch.begin();
-		batch.draw(img, 10, 0);
-
-        TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-        batch.draw(currentFrame, 800, 800); // Draw current frame at (50, 50)
-        batch.draw(currentFrame, 1000, 800); // Draw current frame at (50, 50)
-		batch.end();
-	}
-
-	@Override
-    public void resize(int width, int height){
-	    viewport.update(width, height, true);
-	    batch.setProjectionMatrix(camera.combined);
+        person = new Person(200.0f, 196.0f, walkFrames[0].getRegionWidth(), walkFrames[0].getRegionHeight());
     }
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
-        walkSheet.dispose();
-	}
+
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            person.walk(4.0f, true);
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            person.walk(-4.0f, true);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && person.getPosition().y <= 200)
+            person.jump(14);
+
+
+
+
+
+        person.update();
+        person.clamp(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        walkTime += Gdx.graphics.getDeltaTime() * Math.abs(person.getVelocity().x * 0.1) * (person.getPosition().y <= 200.0f ? 1.0f : 0.25f);
+
+        batch.begin();
+        batch.draw(textures.sky, 0.0f, 0.0f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(textures.ground, 0, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
+        batch.draw(textures.ground, textures.ground.getWidth() / 2, 200.0f - textures.ground.getHeight() / 2, textures.ground.getWidth() / 2, textures.ground.getHeight() / 2);
+
+        platform.drawPlatform();
+
+        TextureRegion currentFrame = walkAnimation.getKeyFrame(walkTime, true);
+        Vector2 position = person.getPosition();
+
+        if (person.isFacingRight())
+            batch.draw(currentFrame, position.x - currentFrame.getRegionWidth() / 2, position.y, 0, 0, currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), 1, 1, 0);
+        else
+            batch.draw(currentFrame, position.x + currentFrame.getRegionWidth() / 2, position.y, 0, 0, currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), -1, 1, 0);
+
+        batch.end();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+        batch.setProjectionMatrix(camera.combined);
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        textures.dispose();
+    }
 }
