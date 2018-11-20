@@ -6,9 +6,11 @@ import com.badlogic.gdx.math.Vector2;
  * Created by isaac on 11/17/2018.
  */
 public class Person {
+
     private Vector2 position;
     private Vector2 velocity;
     private Vector2 size;
+    public AABB personBox;
 
     private static final int GRAVITY = 8;
     private static final boolean MOON_WALK = false;
@@ -17,6 +19,9 @@ public class Person {
         position = new Vector2(x, y);
         velocity = new Vector2(0.0f, 0.0f);
         size = new Vector2(w, h);
+
+        personBox = new AABB(position.x, position.y, 20, 20);
+
     }
 
     public void walk(float vx, boolean sprint) {
@@ -32,7 +37,16 @@ public class Person {
         velocity.y = amount;
     }
 
+    public AABB getPersonBox() {
+        return personBox;
+    }
+
+    public void changeY(int newY) {
+        position.y = newY;
+    }
+
     public void update() {
+
         position.add(velocity);
 
         // Reduce x velocity proportionally
@@ -45,7 +59,10 @@ public class Person {
         } else {
             velocity.y -= GRAVITY * 0.1;
         }
+
+
     }
+
 
     public void clamp(float mx, float my) {
         position.x = Utils.clamp(position.x, 0.0f, mx);

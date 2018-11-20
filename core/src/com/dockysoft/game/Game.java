@@ -25,6 +25,7 @@ public class Game extends ApplicationAdapter {
     private float walkTime;
     private Person person;
     private Platform platform;
+    private AABB platformBox;
 
     @Override
     public void create() {
@@ -63,7 +64,12 @@ public class Game extends ApplicationAdapter {
             person.walk(-4.0f, true);
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && person.getPosition().y <= 200)
-            person.jump(14);
+            person.jump(30);
+
+        if (person.getPersonBox().intersecting(platform.getPlatformBox())) {
+            //set person y to 540
+            person.changeY(540);
+        }
 
         person.update();
         person.clamp(WIDTH, HEIGHT);

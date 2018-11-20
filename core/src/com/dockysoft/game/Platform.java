@@ -12,6 +12,7 @@ public class Platform {
     private TextureCatalog textures;
     private AABB aabb;
 
+
     public Platform(SpriteBatch spriteBatch, TextureCatalog textureCatalog, int x, int y) {
         batch = spriteBatch;
         textures = textureCatalog;
@@ -25,4 +26,9 @@ public class Platform {
     public void drawPlatform()  {
         batch.draw(textures.platform, x, y, w, h);
     }
+
+    public AABB getPlatformBox() {
+        return aabb;
+    }
 }
+
