@@ -20,8 +20,8 @@ public class Person {
         velocity = new Vector2(0.0f, 0.0f);
         size = new Vector2(w, h);
 
-        personBox = new AABB(position.x, position.y, 20, 20);
-
+        personBox = new AABB(0.0f, 0.0f, 0.0f, 0.0f);
+        updatePersonBox();
     }
 
     public void walk(float vx, boolean sprint) {
@@ -38,11 +38,13 @@ public class Person {
     }
 
     public AABB getPersonBox() {
+        updatePersonBox();
         return personBox;
     }
 
-    public void changeY(int newY) {
+    public void snapY(float newY) {
         position.y = newY;
+        velocity.y = 0.0f;
     }
 
     public void update() {
@@ -63,7 +65,6 @@ public class Person {
 
     }
 
-
     public void clamp(float mx, float my) {
         position.x = Utils.clamp(position.x, 0.0f, mx);
         position.y = Utils.clamp(position.y, 0.0f, my);
@@ -83,5 +84,9 @@ public class Person {
 
     public boolean isFacingRight() {
         return MOON_WALK ^ isActuallyFacingRight();
+    }
+
+    private void updatePersonBox(){
+        personBox.set(position.x + size.x * 0.1f, position.y, size.x * 0.8f, size.y);
     }
 }

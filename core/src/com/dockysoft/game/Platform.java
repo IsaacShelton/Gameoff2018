@@ -20,7 +20,7 @@ public class Platform {
         this.y = y;
         this.w = textures.platform.getWidth() / 2;
         this.h = textures.platform.getHeight() / 2;
-        this.aabb = new AABB(this.x, this.y, this.w, this.h);
+        this.aabb = new AABB(this.x, this.y, this.w, this.h * 0.70f);
     }
 
     public void drawPlatform()  {

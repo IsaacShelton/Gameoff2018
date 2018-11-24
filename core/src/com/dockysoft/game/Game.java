@@ -66,14 +66,18 @@ public class Game extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && person.getPosition().y <= 200)
             person.jump(30);
 
-        if (person.getPersonBox().intersecting(platform.getPlatformBox())) {
-            //set person y to 540
-            person.changeY(540);
-        }
-
         person.update();
         person.clamp(WIDTH, HEIGHT);
         walkTime += Gdx.graphics.getDeltaTime() * Math.abs(person.getVelocity().x * 0.1) * (person.getPosition().y <= 200.0f ? 1.0f : 0.25f);
+
+        if (person.getPersonBox().intersecting(platform.getPlatformBox())) {
+            //set person y to 540
+            if(person.getVelocity().y < 0){
+                person.snapY(platform.y + platform.getPlatformBox().h);
+            } else {
+                person.snapY(platform.y - person.getPersonBox().h);
+            }
+        }
 
         batch.begin();
         batch.draw(textures.sky, 0.0f, 0.0f, WIDTH, HEIGHT);
